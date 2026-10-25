@@ -1,0 +1,1216 @@
+- id: '1792741959341'
+  alias: 次卧加湿器：湿度过低开加湿+净化
+  description: 湿度低于50%持续5分钟，开机并设为加湿+净化模式、一档
+  triggers:
+  - entity_id: sensor.treeow_311806_humidity
+    below: 50
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_311806_smart_mode_switch
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_311806_mode_switch
+    data:
+      option: mode_humidify
+  - choose:
+    - conditions:
+      - condition: time
+        after: '20:00:00'
+        before: 09:00:00
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: sleep
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_311806_mode
+      data:
+        option: manual
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_311806_fan_speed
+    data:
+      option: 1gear
+  mode: single
+- id: '1792741974275'
+  alias: 次卧加湿器：湿度达标切换净化或睡眠
+  description: 湿度升到60%后：PM2.5高于20继续净化，否则进入睡眠模式
+  triggers:
+  - entity_id: sensor.treeow_311806_humidity
+    above: 60
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_311806_pm25
+        above: 20
+      sequence:
+      - action: switch.turn_on
+        target:
+          entity_id: switch.treeow_311806_switch
+      - action: switch.turn_on
+        target:
+          entity_id: switch.treeow_311806_child_lock
+      - action: switch.turn_off
+        target:
+          entity_id: switch.treeow_311806_smart_mode_switch
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode_switch
+        data:
+          option: mode_purify
+      - choose:
+        - conditions:
+          - condition: time
+            after: '20:00:00'
+            before: 09:00:00
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_311806_mode
+            data:
+              option: sleep
+        default:
+        - action: select.select_option
+          target:
+            entity_id: select.treeow_311806_mode
+          data:
+            option: manual
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_fan_speed
+        data:
+          option: 1gear
+    default:
+    - action: switch.turn_on
+      target:
+        entity_id: switch.treeow_311806_switch
+    - action: switch.turn_on
+      target:
+        entity_id: switch.treeow_311806_child_lock
+    - action: switch.turn_off
+      target:
+        entity_id: switch.treeow_311806_smart_mode_switch
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_311806_mode_switch
+      data:
+        option: mode_purify
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_311806_mode
+      data:
+        option: sleep
+  mode: single
+- id: '1792741990335'
+  alias: 次卧空气净化器：PM2.5超标自动净化
+  description: PM2.5高于20持续5分钟：湿度偏低开加湿+净化，湿度正常开仅净化，均为一档
+  triggers:
+  - entity_id: sensor.treeow_311806_pm25
+    above: 20
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_311806_smart_mode_switch
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.treeow_311806_humidity
+          below: 50
+        - condition: and
+          conditions:
+          - condition: state
+            entity_id: switch.treeow_311806_switch
+            state: 'on'
+          - condition: state
+            entity_id: select.treeow_311806_mode_switch
+            state: mode_humidify
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode_switch
+        data:
+          option: mode_humidify
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_311806_mode_switch
+      data:
+        option: mode_purify
+  - choose:
+    - conditions:
+      - condition: time
+        after: '20:00:00'
+        before: 09:00:00
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: sleep
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_311806_mode
+      data:
+        option: manual
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_311806_fan_speed
+    data:
+      option: 1gear
+  mode: single
+- id: '1792742003391'
+  alias: 次卧加湿器：空气达标切换睡眠
+  description: PM2.5回落到10以下持续5分钟且湿度不低于50%时进入睡眠模式
+  triggers:
+  - entity_id: sensor.treeow_311806_pm25
+    below: 10
+    for:
+      minutes: 2
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.treeow_311806_humidity
+    above: 50
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_311806_smart_mode_switch
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_311806_mode_switch
+    data:
+      option: mode_purify
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_311806_mode
+    data:
+      option: sleep
+  mode: single
+- id: '1792745043647'
+  alias: 次卧加湿器：水箱水量低提醒
+  description: 水箱水量低于20%持续5分钟时推送Server酱提醒加水
+  triggers:
+  - entity_id: sensor.treeow_311806_water_table
+    below: 20
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - action: rest_command.klmfather
+    data:
+      title: 次卧加湿器水量已低于20%，请及时加水
+      desp: 次卧加湿器水量已低于20%，请及时加水
+  - action: rest_command.klmmother
+    data:
+      title: 次卧加湿器水量已低于20%，请及时加水
+      desp: 次卧加湿器水量已低于20%，请及时加水
+  mode: single
+- id: '1792745808477'
+  alias: 客厅空气净化器：按PM2.5浓度自动调档
+  description: PM2.5越过各阈值时开机/调档：0~10一档，10~20二档，20~30三档，30~40四档，40以上五档；晚上8点-早晨9点统一一档；均打开童锁
+  triggers:
+  - entity_id: sensor.treeow_214644_pm25
+    above: 10
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
+    above: 20
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
+    above: 30
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
+    above: 40
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
+    below: 40
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
+    below: 30
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
+    below: 20
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
+    below: 10
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_214644_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_214644_child_lock
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: time
+          after: '20:00:00'
+          before: 09:00:00
+        - condition: numeric_state
+          entity_id: sensor.treeow_214644_pm25
+          below: 10
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 2gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 3gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 30
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 4gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 5gear
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_214644_fan_speed_enum
+      data:
+        option: 6gear
+  mode: single
+- id: '1792749990000'
+  alias: 客厅空气净化器：早晨9点唤醒并检查
+  description: 每天早晨9点自动开机，5分钟后按PM2.5档位表选档，防止设备被手动关闭后传感器停止上报
+  triggers:
+  - at: '09:00:00'
+    trigger: time
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_214644_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_214644_child_lock
+  - delay: '00:02:00'
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 10
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 2gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 3gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 30
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 4gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 5gear
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_214644_fan_speed_enum
+      data:
+        option: 6gear
+  mode: single
+- id: '1792747234235'
+  alias: 次卧加湿器：晚上8点切睡眠模式
+  description: 晚上8点开机中的设备切为睡眠模式
+  triggers:
+  - at: '20:00:00'
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: switch.treeow_311806_switch
+    state: 'on'
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_311806_smart_mode_switch
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_311806_mode
+    data:
+      option: sleep
+  mode: single
+- id: '1792749205909'
+  alias: 客厅空气净化器：晚上8点切一档
+  description: 晚上8点开机中的设备统一切为一档静音
+  triggers:
+  - at: '20:00:00'
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: switch.treeow_214644_switch
+    state: 'on'
+  actions:
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_214644_fan_speed_enum
+    data:
+      option: 2gear
+  mode: single
+- id: '1792749300000'
+  alias: 次卧加湿器：早晨9点唤醒并检查
+  description: 每天早晨9点自动开机，5分钟后按正常逻辑决策：湿度<50加湿，PM2.5>20净化，PM2.5<10睡眠，10~20保持当前状态
+  triggers:
+  - at: '09:00:00'
+    trigger: time
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_311806_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_311806_smart_mode_switch
+  - delay: '00:02:00'
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_311806_humidity
+        below: 50
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode_switch
+        data:
+          option: mode_humidify
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: manual
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_fan_speed
+        data:
+          option: 1gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_311806_pm25
+        above: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode_switch
+        data:
+          option: mode_purify
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: manual
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_fan_speed
+        data:
+          option: 1gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_311806_pm25
+        below: 10
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode_switch
+        data:
+          option: mode_purify
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: sleep
+  mode: single
+- id: '1792800000001'
+  alias: 客厅加湿器：湿度过低开加湿+净化
+  description: 湿度低于50%持续5分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整（夜间一档）
+  triggers:
+  - entity_id: sensor.treeow_531648_humidity
+    below: 50
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_531648_smart_mode_switch
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_mode_switch
+    data:
+      option: mode_humidify
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_mode
+    data:
+      option: manual
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: time
+          after: '20:00:00'
+          before: 09:00:00
+        - condition: numeric_state
+          entity_id: sensor.treeow_531648_pm25
+          below: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 1gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 2gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 60
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 3gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 80
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 4gear
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_531648_fan_speed
+      data:
+        option: 5gear
+  mode: single
+- id: '1792800000002'
+  alias: 客厅加湿器：湿度达标切换仅净化
+  description: 湿度升到60%持续5分钟后切换为仅净化模式，档位按PM2.5动态调整（夜间一档）
+  triggers:
+  - entity_id: sensor.treeow_531648_humidity
+    above: 60
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_531648_smart_mode_switch
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_mode_switch
+    data:
+      option: mode_purify
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_mode
+    data:
+      option: manual
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: time
+          after: '20:00:00'
+          before: 09:00:00
+        - condition: numeric_state
+          entity_id: sensor.treeow_531648_pm25
+          below: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 1gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 2gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 60
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 3gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 80
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 4gear
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_531648_fan_speed
+      data:
+        option: 5gear
+  mode: single
+- id: '1792800000003'
+  alias: 客厅加湿器：PM2.5超标自动净化
+  description: PM2.5高于20持续5分钟：湿度偏低开加湿+净化，湿度正常开仅净化，档位按PM2.5动态调整
+  triggers:
+  - entity_id: sensor.treeow_531648_pm25
+    above: 20
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_531648_smart_mode_switch
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: numeric_state
+          entity_id: sensor.treeow_531648_humidity
+          below: 50
+        - condition: and
+          conditions:
+          - condition: state
+            entity_id: switch.treeow_531648_switch
+            state: 'on'
+          - condition: state
+            entity_id: select.treeow_531648_mode_switch
+            state: mode_humidify
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_mode_switch
+        data:
+          option: mode_humidify
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_531648_mode_switch
+      data:
+        option: mode_purify
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_mode
+    data:
+      option: manual
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: time
+          after: '20:00:00'
+          before: 09:00:00
+        - condition: numeric_state
+          entity_id: sensor.treeow_531648_pm25
+          below: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 1gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 2gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 60
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 3gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 80
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 4gear
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_531648_fan_speed
+      data:
+        option: 5gear
+  mode: single
+- id: '1792800000004'
+  alias: 客厅加湿器：空气达标切换低档
+  description: PM2.5回落到10以下持续5分钟且湿度不低于50%时，切换为仅净化一档
+  triggers:
+  - entity_id: sensor.treeow_531648_pm25
+    below: 10
+    for:
+      minutes: 2
+    trigger: numeric_state
+  conditions:
+  - condition: numeric_state
+    entity_id: sensor.treeow_531648_humidity
+    above: 50
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_531648_smart_mode_switch
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_mode_switch
+    data:
+      option: mode_purify
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_mode
+    data:
+      option: manual
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_fan_speed
+    data:
+      option: 1gear
+  mode: single
+- id: '1792800000005'
+  alias: 客厅加湿器：按PM2.5动态调档
+  description: 设备开机状态下，PM2.5越过各档位阈值时自动调档：夜间(20点-9点)及0-20为一档，20-40二档，40-60三档，60-80四档，80以上五档
+  triggers:
+  - entity_id: sensor.treeow_531648_pm25
+    above: 20
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_531648_pm25
+    above: 40
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_531648_pm25
+    above: 60
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_531648_pm25
+    above: 80
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_531648_pm25
+    below: 80
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_531648_pm25
+    below: 60
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_531648_pm25
+    below: 40
+    for:
+      minutes: 2
+    trigger: numeric_state
+  - entity_id: sensor.treeow_531648_pm25
+    below: 20
+    for:
+      minutes: 2
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: switch.treeow_531648_switch
+    state: 'on'
+  actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_531648_smart_mode_switch
+  - choose:
+    - conditions:
+      - condition: or
+        conditions:
+        - condition: time
+          after: '20:00:00'
+          before: 09:00:00
+        - condition: numeric_state
+          entity_id: sensor.treeow_531648_pm25
+          below: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 1gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 2gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 60
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 3gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 80
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 4gear
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_531648_fan_speed
+      data:
+        option: 5gear
+  mode: single
+- id: '1792800000006'
+  alias: 客厅加湿器：水箱水量低提醒
+  description: 水箱水量低于20%持续5分钟时推送Server酱提醒加水
+  triggers:
+  - entity_id: sensor.treeow_531648_water_table
+    below: 20
+    for:
+      minutes: 2
+    trigger: numeric_state
+  actions:
+  - action: rest_command.klmfather
+    data:
+      title: 客厅加湿器水量已低于20%，请及时加水
+      desp: 客厅加湿器水量已低于20%，请及时加水
+  - action: rest_command.klmmother
+    data:
+      title: 客厅加湿器水量已低于20%，请及时加水
+      desp: 客厅加湿器水量已低于20%，请及时加水
+  mode: single
+- id: '1792800000007'
+  alias: 客厅加湿器：晚上8点切低档
+  description: 晚上8点开机中的设备切换为手动一档（夜间静音）
+  triggers:
+  - at: '20:00:00'
+    trigger: time
+  conditions:
+  - condition: state
+    entity_id: switch.treeow_531648_switch
+    state: 'on'
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_531648_smart_mode_switch
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_mode
+    data:
+      option: manual
+  - action: select.select_option
+    target:
+      entity_id: select.treeow_531648_fan_speed
+    data:
+      option: 1gear
+  mode: single
+- id: '1792800000008'
+  alias: 客厅加湿器：早晨9点唤醒并检查
+  description: 每天早晨9点自动开机，5分钟后按正常逻辑决策：湿度<50加湿，PM2.5>20净化，PM2.5<10低档，10~20保持当前状态
+  triggers:
+  - at: '09:00:00'
+    trigger: time
+  actions:
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_switch
+  - action: switch.turn_on
+    target:
+      entity_id: switch.treeow_531648_child_lock
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_531648_smart_mode_switch
+  - delay: '00:02:00'
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_humidity
+        below: 50
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_mode_switch
+        data:
+          option: mode_humidify
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_mode
+        data:
+          option: manual
+      - choose:
+        - conditions:
+          - condition: numeric_state
+            entity_id: sensor.treeow_531648_pm25
+            below: 20
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_531648_fan_speed
+            data:
+              option: 1gear
+        - conditions:
+          - condition: numeric_state
+            entity_id: sensor.treeow_531648_pm25
+            below: 40
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_531648_fan_speed
+            data:
+              option: 2gear
+        - conditions:
+          - condition: numeric_state
+            entity_id: sensor.treeow_531648_pm25
+            below: 60
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_531648_fan_speed
+            data:
+              option: 3gear
+        - conditions:
+          - condition: numeric_state
+            entity_id: sensor.treeow_531648_pm25
+            below: 80
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_531648_fan_speed
+            data:
+              option: 4gear
+        default:
+        - action: select.select_option
+          target:
+            entity_id: select.treeow_531648_fan_speed
+          data:
+            option: 5gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        above: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_mode_switch
+        data:
+          option: mode_purify
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_mode
+        data:
+          option: manual
+      - choose:
+        - conditions:
+          - condition: numeric_state
+            entity_id: sensor.treeow_531648_pm25
+            below: 20
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_531648_fan_speed
+            data:
+              option: 1gear
+        - conditions:
+          - condition: numeric_state
+            entity_id: sensor.treeow_531648_pm25
+            below: 40
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_531648_fan_speed
+            data:
+              option: 2gear
+        - conditions:
+          - condition: numeric_state
+            entity_id: sensor.treeow_531648_pm25
+            below: 60
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_531648_fan_speed
+            data:
+              option: 3gear
+        - conditions:
+          - condition: numeric_state
+            entity_id: sensor.treeow_531648_pm25
+            below: 80
+          sequence:
+          - action: select.select_option
+            target:
+              entity_id: select.treeow_531648_fan_speed
+            data:
+              option: 4gear
+        default:
+        - action: select.select_option
+          target:
+            entity_id: select.treeow_531648_fan_speed
+          data:
+            option: 5gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 10
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_mode_switch
+        data:
+          option: mode_purify
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_mode
+        data:
+          option: manual
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_531648_fan_speed
+        data:
+          option: 1gear
+  mode: single
+- id: '1792800000009'
+  alias: 次卧加湿器：离线或关机提醒
+  description: 设备离线或关机持续5分钟时推送提醒
+  triggers:
+  - entity_id: switch.treeow_311806_switch
+    to: 'unavailable'
+    for:
+      minutes: 2
+    trigger: state
+  - entity_id: switch.treeow_311806_switch
+    to: 'off'
+    for:
+      minutes: 2
+    trigger: state
+  actions:
+  - action: rest_command.klmfather
+    data:
+      title: 次卧加湿器已离线或关机超过5分钟，请检查
+      desp: 次卧加湿器已离线或关机超过5分钟，请检查
+  - action: rest_command.klmmother
+    data:
+      title: 次卧加湿器已离线或关机超过5分钟，请检查
+      desp: 次卧加湿器已离线或关机超过5分钟，请检查
+  mode: single
+- id: '1792800000010'
+  alias: 客厅空气净化器：离线或关机提醒
+  description: 设备离线或关机持续5分钟时推送提醒
+  triggers:
+  - entity_id: switch.treeow_214644_switch
+    to: 'unavailable'
+    for:
+      minutes: 2
+    trigger: state
+  - entity_id: switch.treeow_214644_switch
+    to: 'off'
+    for:
+      minutes: 2
+    trigger: state
+  actions:
+  - action: rest_command.klmfather
+    data:
+      title: 客厅空气净化器已离线或关机超过5分钟，请检查
+      desp: 客厅空气净化器已离线或关机超过5分钟，请检查
+  - action: rest_command.klmmother
+    data:
+      title: 客厅空气净化器已离线或关机超过5分钟，请检查
+      desp: 客厅空气净化器已离线或关机超过5分钟，请检查
+  mode: single
+- id: '1792800000011'
+  alias: 客厅加湿器：离线或关机提醒
+  description: 设备离线或关机持续5分钟时推送提醒
+  triggers:
+  - entity_id: switch.treeow_531648_switch
+    to: 'unavailable'
+    for:
+      minutes: 2
+    trigger: state
+  - entity_id: switch.treeow_531648_switch
+    to: 'off'
+    for:
+      minutes: 2
+    trigger: state
+  actions:
+  - action: rest_command.klmfather
+    data:
+      title: 客厅加湿器已离线或关机超过5分钟，请检查
+      desp: 客厅加湿器已离线或关机超过5分钟，请检查
+  - action: rest_command.klmmother
+    data:
+      title: 客厅加湿器已离线或关机超过5分钟，请检查
+      desp: 客厅加湿器已离线或关机超过5分钟，请检查
+  mode: single
