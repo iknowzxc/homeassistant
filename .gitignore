@@ -1,0 +1,25 @@
+# Home Assistant
+secrets.yaml
+.storage/
+.cloud/
+.extraconf/
+*.db
+*.db-shm
+*.db-wal
+.HA_VERSION
+home-assistant.log*
+*.log
+
+# 运行时生成
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# 编辑器 / IDE
+.vscode/
+.idea/
+
+# 操作系统
+.DS_Store
+Thumbs.db
+desktop.ini

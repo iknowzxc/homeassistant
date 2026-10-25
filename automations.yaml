@@ -22,6 +22,7 @@
       entity_id: select.treeow_311806_mode_switch
     data:
       option: mode_humidify
+  - delay: '00:00:10'
   - choose:
     - conditions:
       - condition: time
@@ -75,6 +76,7 @@
           entity_id: select.treeow_311806_mode_switch
         data:
           option: mode_purify
+      - delay: '00:00:10'
       - choose:
         - conditions:
           - condition: time
@@ -112,6 +114,7 @@
         entity_id: select.treeow_311806_mode_switch
       data:
         option: mode_purify
+    - delay: '00:00:10'
     - action: select.select_option
       target:
         entity_id: select.treeow_311806_mode
@@ -158,12 +161,14 @@
           entity_id: select.treeow_311806_mode_switch
         data:
           option: mode_humidify
+      - delay: '00:00:10'
     default:
     - action: select.select_option
       target:
         entity_id: select.treeow_311806_mode_switch
       data:
         option: mode_purify
+    - delay: '00:00:10'
   - choose:
     - conditions:
       - condition: time
@@ -215,6 +220,7 @@
       entity_id: select.treeow_311806_mode_switch
     data:
       option: mode_purify
+  - delay: '00:00:10'
   - action: select.select_option
     target:
       entity_id: select.treeow_311806_mode
@@ -230,6 +236,10 @@
     for:
       minutes: 2
     trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.treeow_311806_water_alerted
+    state: 'off'
   actions:
   - action: rest_command.klmfather
     data:
@@ -239,6 +249,9 @@
     data:
       title: 次卧加湿器水量已低于20%，请及时加水
       desp: 次卧加湿器水量已低于20%，请及时加水
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.treeow_311806_water_alerted
   mode: single
 - id: '1792745808477'
   alias: 客厅空气净化器：按PM2.5浓度自动调档
@@ -474,6 +487,7 @@
           entity_id: select.treeow_311806_mode_switch
         data:
           option: mode_humidify
+      - delay: '00:00:10'
       - action: select.select_option
         target:
           entity_id: select.treeow_311806_mode
@@ -494,6 +508,7 @@
           entity_id: select.treeow_311806_mode_switch
         data:
           option: mode_purify
+      - delay: '00:00:10'
       - action: select.select_option
         target:
           entity_id: select.treeow_311806_mode
@@ -514,6 +529,7 @@
           entity_id: select.treeow_311806_mode_switch
         data:
           option: mode_purify
+      - delay: '00:00:10'
       - action: select.select_option
         target:
           entity_id: select.treeow_311806_mode
@@ -544,6 +560,7 @@
       entity_id: select.treeow_531648_mode_switch
     data:
       option: mode_humidify
+  - delay: '00:00:10'
   - action: select.select_option
     target:
       entity_id: select.treeow_531648_mode
@@ -626,6 +643,7 @@
       entity_id: select.treeow_531648_mode_switch
     data:
       option: mode_purify
+  - delay: '00:00:10'
   - action: select.select_option
     target:
       entity_id: select.treeow_531648_mode
@@ -724,12 +742,14 @@
           entity_id: select.treeow_531648_mode_switch
         data:
           option: mode_humidify
+      - delay: '00:00:10'
     default:
     - action: select.select_option
       target:
         entity_id: select.treeow_531648_mode_switch
       data:
         option: mode_purify
+    - delay: '00:00:10'
   - action: select.select_option
     target:
       entity_id: select.treeow_531648_mode
@@ -816,6 +836,7 @@
       entity_id: select.treeow_531648_mode_switch
     data:
       option: mode_purify
+  - delay: '00:00:10'
   - action: select.select_option
     target:
       entity_id: select.treeow_531648_mode
@@ -941,6 +962,10 @@
     for:
       minutes: 2
     trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: input_boolean.treeow_531648_water_alerted
+    state: 'off'
   actions:
   - action: rest_command.klmfather
     data:
@@ -950,6 +975,9 @@
     data:
       title: 客厅加湿器水量已低于20%，请及时加水
       desp: 客厅加湿器水量已低于20%，请及时加水
+  - action: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.treeow_531648_water_alerted
   mode: single
 - id: '1792800000007'
   alias: 客厅加湿器：晚上8点切低档
@@ -1007,6 +1035,7 @@
           entity_id: select.treeow_531648_mode_switch
         data:
           option: mode_humidify
+      - delay: '00:00:10'
       - action: select.select_option
         target:
           entity_id: select.treeow_531648_mode
@@ -1069,6 +1098,7 @@
           entity_id: select.treeow_531648_mode_switch
         data:
           option: mode_purify
+      - delay: '00:00:10'
       - action: select.select_option
         target:
           entity_id: select.treeow_531648_mode
@@ -1131,6 +1161,7 @@
           entity_id: select.treeow_531648_mode_switch
         data:
           option: mode_purify
+      - delay: '00:00:10'
       - action: select.select_option
         target:
           entity_id: select.treeow_531648_mode
@@ -1213,4 +1244,28 @@
     data:
       title: 客厅加湿器已离线或关机超过5分钟，请检查
       desp: 客厅加湿器已离线或关机超过5分钟，请检查
+  mode: single
+- id: '1792800000012'
+  alias: 次卧加湿器：加水后重置提醒
+  description: 水箱水量回升到30%以上时，解除低水量提醒标记，允许下次再提醒
+  triggers:
+  - entity_id: sensor.treeow_311806_water_table
+    above: 30
+    trigger: numeric_state
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.treeow_311806_water_alerted
+  mode: single
+- id: '1792800000013'
+  alias: 客厅加湿器：加水后重置提醒
+  description: 水箱水量回升到30%以上时，解除低水量提醒标记，允许下次再提醒
+  triggers:
+  - entity_id: sensor.treeow_531648_water_table
+    above: 30
+    trigger: numeric_state
+  actions:
+  - action: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.treeow_531648_water_alerted
   mode: single
