@@ -1,11 +1,11 @@
 - id: '1792741959341'
   alias: 次卧加湿器：湿度过低开加湿+净化
-  description: 湿度低于50%持续5分钟，开机并设为加湿+净化模式、一档
+  description: 湿度低于50%持续1分钟，开机并设为加湿+净化模式、一档
   triggers:
   - entity_id: sensor.treeow_311806_humidity
     below: 50
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -53,7 +53,7 @@
   - entity_id: sensor.treeow_311806_humidity
     above: 60
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   actions:
   - choose:
@@ -123,12 +123,12 @@
   mode: single
 - id: '1792741990335'
   alias: 次卧空气净化器：PM2.5超标自动净化
-  description: PM2.5高于20持续5分钟：湿度偏低开加湿+净化，湿度正常开仅净化，均为一档
+  description: PM2.5高于20持续1分钟：湿度偏低开加湿+净化，湿度正常开仅净化，均为一档
   triggers:
   - entity_id: sensor.treeow_311806_pm25
     above: 20
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -194,12 +194,12 @@
   mode: single
 - id: '1792742003391'
   alias: 次卧加湿器：空气达标切换睡眠
-  description: PM2.5回落到10以下持续5分钟且湿度不低于50%时进入睡眠模式
+  description: PM2.5回落到10以下持续1分钟且湿度不低于50%时进入睡眠模式
   triggers:
   - entity_id: sensor.treeow_311806_pm25
     below: 10
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   conditions:
   - condition: numeric_state
@@ -229,12 +229,12 @@
   mode: single
 - id: '1792745043647'
   alias: 次卧加湿器：水箱水量低提醒
-  description: 水箱水量低于20%持续5分钟时推送Server酱提醒加水
+  description: 水箱水量低于20%持续1分钟时推送Server酱提醒加水
   triggers:
   - entity_id: sensor.treeow_311806_water_table
     below: 20
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   conditions:
   - condition: state
@@ -260,42 +260,42 @@
   - entity_id: sensor.treeow_214644_pm25
     above: 10
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     above: 20
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     above: 30
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     above: 40
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 40
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 30
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 20
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 10
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -538,12 +538,12 @@
   mode: single
 - id: '1792800000001'
   alias: 客厅加湿器：湿度过低开加湿+净化
-  description: 湿度低于50%持续5分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整（夜间一档）
+  description: 湿度低于50%持续1分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整（夜间一档）
   triggers:
   - entity_id: sensor.treeow_531648_humidity
     below: 50
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -621,12 +621,12 @@
   mode: single
 - id: '1792800000002'
   alias: 客厅加湿器：湿度达标切换仅净化
-  description: 湿度升到60%持续5分钟后切换为仅净化模式，档位按PM2.5动态调整（夜间一档）
+  description: 湿度升到60%持续1分钟后切换为仅净化模式，档位按PM2.5动态调整（夜间一档）
   triggers:
   - entity_id: sensor.treeow_531648_humidity
     above: 60
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -704,12 +704,12 @@
   mode: single
 - id: '1792800000003'
   alias: 客厅加湿器：PM2.5超标自动净化
-  description: PM2.5高于20持续5分钟：湿度偏低开加湿+净化，湿度正常开仅净化，档位按PM2.5动态调整
+  description: PM2.5高于20持续1分钟：湿度偏低开加湿+净化，湿度正常开仅净化，档位按PM2.5动态调整
   triggers:
   - entity_id: sensor.treeow_531648_pm25
     above: 20
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -810,12 +810,12 @@
   mode: single
 - id: '1792800000004'
   alias: 客厅加湿器：空气达标切换低档
-  description: PM2.5回落到10以下持续5分钟且湿度不低于50%时，切换为仅净化一档
+  description: PM2.5回落到10以下持续1分钟且湿度不低于50%时，切换为仅净化一档
   triggers:
   - entity_id: sensor.treeow_531648_pm25
     below: 10
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   conditions:
   - condition: numeric_state
@@ -855,42 +855,42 @@
   - entity_id: sensor.treeow_531648_pm25
     above: 20
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_531648_pm25
     above: 40
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_531648_pm25
     above: 60
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_531648_pm25
     above: 80
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_531648_pm25
     below: 80
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_531648_pm25
     below: 60
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_531648_pm25
     below: 40
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_531648_pm25
     below: 20
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   conditions:
   - condition: state
@@ -955,12 +955,12 @@
   mode: single
 - id: '1792800000006'
   alias: 客厅加湿器：水箱水量低提醒
-  description: 水箱水量低于20%持续5分钟时推送Server酱提醒加水
+  description: 水箱水量低于20%持续1分钟时推送Server酱提醒加水
   triggers:
   - entity_id: sensor.treeow_531648_water_table
     below: 20
     for:
-      minutes: 2
+      minutes: 1
     trigger: numeric_state
   conditions:
   - condition: state
@@ -1175,75 +1175,75 @@
   mode: single
 - id: '1792800000009'
   alias: 次卧加湿器：离线或关机提醒
-  description: 设备离线或关机持续5分钟时推送提醒
+  description: 设备离线或关机持续1分钟时推送提醒
   triggers:
   - entity_id: switch.treeow_311806_switch
     to: 'unavailable'
     for:
-      minutes: 2
+      minutes: 1
     trigger: state
   - entity_id: switch.treeow_311806_switch
     to: 'off'
     for:
-      minutes: 2
+      minutes: 1
     trigger: state
   actions:
   - action: rest_command.klmfather
     data:
-      title: 次卧加湿器已离线或关机超过5分钟，请检查
-      desp: 次卧加湿器已离线或关机超过5分钟，请检查
+      title: 次卧加湿器已离线或关机超过1分钟，请检查
+      desp: 次卧加湿器已离线或关机超过1分钟，请检查
   - action: rest_command.klmmother
     data:
-      title: 次卧加湿器已离线或关机超过5分钟，请检查
-      desp: 次卧加湿器已离线或关机超过5分钟，请检查
+      title: 次卧加湿器已离线或关机超过1分钟，请检查
+      desp: 次卧加湿器已离线或关机超过1分钟，请检查
   mode: single
 - id: '1792800000010'
   alias: 客厅空气净化器：离线或关机提醒
-  description: 设备离线或关机持续5分钟时推送提醒
+  description: 设备离线或关机持续1分钟时推送提醒
   triggers:
   - entity_id: switch.treeow_214644_switch
     to: 'unavailable'
     for:
-      minutes: 2
+      minutes: 1
     trigger: state
   - entity_id: switch.treeow_214644_switch
     to: 'off'
     for:
-      minutes: 2
+      minutes: 1
     trigger: state
   actions:
   - action: rest_command.klmfather
     data:
-      title: 客厅空气净化器已离线或关机超过5分钟，请检查
-      desp: 客厅空气净化器已离线或关机超过5分钟，请检查
+      title: 客厅空气净化器已离线或关机超过1分钟，请检查
+      desp: 客厅空气净化器已离线或关机超过1分钟，请检查
   - action: rest_command.klmmother
     data:
-      title: 客厅空气净化器已离线或关机超过5分钟，请检查
-      desp: 客厅空气净化器已离线或关机超过5分钟，请检查
+      title: 客厅空气净化器已离线或关机超过1分钟，请检查
+      desp: 客厅空气净化器已离线或关机超过1分钟，请检查
   mode: single
 - id: '1792800000011'
   alias: 客厅加湿器：离线或关机提醒
-  description: 设备离线或关机持续5分钟时推送提醒
+  description: 设备离线或关机持续1分钟时推送提醒
   triggers:
   - entity_id: switch.treeow_531648_switch
     to: 'unavailable'
     for:
-      minutes: 2
+      minutes: 1
     trigger: state
   - entity_id: switch.treeow_531648_switch
     to: 'off'
     for:
-      minutes: 2
+      minutes: 1
     trigger: state
   actions:
   - action: rest_command.klmfather
     data:
-      title: 客厅加湿器已离线或关机超过5分钟，请检查
-      desp: 客厅加湿器已离线或关机超过5分钟，请检查
+      title: 客厅加湿器已离线或关机超过1分钟，请检查
+      desp: 客厅加湿器已离线或关机超过1分钟，请检查
   - action: rest_command.klmmother
     data:
-      title: 客厅加湿器已离线或关机超过5分钟，请检查
-      desp: 客厅加湿器已离线或关机超过5分钟，请检查
+      title: 客厅加湿器已离线或关机超过1分钟，请检查
+      desp: 客厅加湿器已离线或关机超过1分钟，请检查
   mode: single
 - id: '1792800000012'
   alias: 次卧加湿器：加水后重置提醒
