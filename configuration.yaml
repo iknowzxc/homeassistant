@@ -10,12 +10,6 @@ automation: !include automations.yaml
 script: !include scripts.yaml
 scene: !include scenes.yaml
 
-input_boolean:
-  treeow_311806_water_alerted:
-    name: 次卧加湿器低水量已提醒
-  treeow_531648_water_alerted:
-    name: 客厅加湿器低水量已提醒
-
 
 
 

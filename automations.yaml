@@ -227,35 +227,9 @@
     data:
       option: sleep
   mode: single
-- id: '1792745043647'
-  alias: 次卧加湿器：水箱水量低提醒
-  description: 水箱水量低于20%持续1分钟时推送Server酱提醒加水
-  triggers:
-  - entity_id: sensor.treeow_311806_water_table
-    below: 20
-    for:
-      minutes: 1
-    trigger: numeric_state
-  conditions:
-  - condition: state
-    entity_id: input_boolean.treeow_311806_water_alerted
-    state: 'off'
-  actions:
-  - action: rest_command.klmfather
-    data:
-      title: 次卧加湿器水量已低于20%，请及时加水
-      desp: 次卧加湿器水量已低于20%，请及时加水
-  - action: rest_command.klmmother
-    data:
-      title: 次卧加湿器水量已低于20%，请及时加水
-      desp: 次卧加湿器水量已低于20%，请及时加水
-  - action: input_boolean.turn_on
-    target:
-      entity_id: input_boolean.treeow_311806_water_alerted
-  mode: single
 - id: '1792745808477'
   alias: 客厅空气净化器：按PM2.5浓度自动调档
-  description: PM2.5越过各阈值时开机/调档：0~10一档，10~20二档，20~30三档，30~40四档，40以上五档；晚上8点-早晨9点统一一档；均打开童锁
+  description: PM2.5越过各阈值时开机/调档：0~10一档，10~20二档，20~30三档，30~40四档，40以上五档；均打开童锁
   triggers:
   - entity_id: sensor.treeow_214644_pm25
     above: 10
@@ -306,14 +280,9 @@
       entity_id: switch.treeow_214644_child_lock
   - choose:
     - conditions:
-      - condition: or
-        conditions:
-        - condition: time
-          after: '20:00:00'
-          before: 09:00:00
-        - condition: numeric_state
-          entity_id: sensor.treeow_214644_pm25
-          below: 10
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 10
       sequence:
       - action: select.select_option
         target:
@@ -442,23 +411,6 @@
     data:
       option: sleep
   mode: single
-- id: '1792749205909'
-  alias: 客厅空气净化器：晚上8点切一档
-  description: 晚上8点开机中的设备统一切为一档静音
-  triggers:
-  - at: '20:00:00'
-    trigger: time
-  conditions:
-  - condition: state
-    entity_id: switch.treeow_214644_switch
-    state: 'on'
-  actions:
-  - action: select.select_option
-    target:
-      entity_id: select.treeow_214644_fan_speed_enum
-    data:
-      option: 2gear
-  mode: single
 - id: '1792749300000'
   alias: 次卧加湿器：早晨9点唤醒并检查
   description: 每天早晨9点自动开机，5分钟后按正常逻辑决策：湿度<50加湿，PM2.5>20净化，PM2.5<10睡眠，10~20保持当前状态
@@ -538,7 +490,7 @@
   mode: single
 - id: '1792800000001'
   alias: 客厅加湿器：湿度过低开加湿+净化
-  description: 湿度低于50%持续1分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整（夜间一档）
+  description: 湿度低于50%持续1分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整
   triggers:
   - entity_id: sensor.treeow_531648_humidity
     below: 50
@@ -568,14 +520,9 @@
       option: manual
   - choose:
     - conditions:
-      - condition: or
-        conditions:
-        - condition: time
-          after: '20:00:00'
-          before: 09:00:00
-        - condition: numeric_state
-          entity_id: sensor.treeow_531648_pm25
-          below: 20
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 20
       sequence:
       - action: select.select_option
         target:
@@ -621,7 +568,7 @@
   mode: single
 - id: '1792800000002'
   alias: 客厅加湿器：湿度达标切换仅净化
-  description: 湿度升到60%持续1分钟后切换为仅净化模式，档位按PM2.5动态调整（夜间一档）
+  description: 湿度升到60%持续1分钟后切换为仅净化模式，档位按PM2.5动态调整
   triggers:
   - entity_id: sensor.treeow_531648_humidity
     above: 60
@@ -651,14 +598,9 @@
       option: manual
   - choose:
     - conditions:
-      - condition: or
-        conditions:
-        - condition: time
-          after: '20:00:00'
-          before: 09:00:00
-        - condition: numeric_state
-          entity_id: sensor.treeow_531648_pm25
-          below: 20
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 20
       sequence:
       - action: select.select_option
         target:
@@ -757,14 +699,9 @@
       option: manual
   - choose:
     - conditions:
-      - condition: or
-        conditions:
-        - condition: time
-          after: '20:00:00'
-          before: 09:00:00
-        - condition: numeric_state
-          entity_id: sensor.treeow_531648_pm25
-          below: 20
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 20
       sequence:
       - action: select.select_option
         target:
@@ -850,7 +787,7 @@
   mode: single
 - id: '1792800000005'
   alias: 客厅加湿器：按PM2.5动态调档
-  description: 设备开机状态下，PM2.5越过各档位阈值时自动调档：夜间(20点-9点)及0-20为一档，20-40二档，40-60三档，60-80四档，80以上五档
+  description: 设备开机状态下，PM2.5越过各档位阈值时自动调档：0-20为一档，20-40二档，40-60三档，60-80四档，80以上五档
   triggers:
   - entity_id: sensor.treeow_531648_pm25
     above: 20
@@ -902,14 +839,9 @@
       entity_id: switch.treeow_531648_smart_mode_switch
   - choose:
     - conditions:
-      - condition: or
-        conditions:
-        - condition: time
-          after: '20:00:00'
-          before: 09:00:00
-        - condition: numeric_state
-          entity_id: sensor.treeow_531648_pm25
-          below: 20
+      - condition: numeric_state
+        entity_id: sensor.treeow_531648_pm25
+        below: 20
       sequence:
       - action: select.select_option
         target:
@@ -952,60 +884,6 @@
         entity_id: select.treeow_531648_fan_speed
       data:
         option: 5gear
-  mode: single
-- id: '1792800000006'
-  alias: 客厅加湿器：水箱水量低提醒
-  description: 水箱水量低于20%持续1分钟时推送Server酱提醒加水
-  triggers:
-  - entity_id: sensor.treeow_531648_water_table
-    below: 20
-    for:
-      minutes: 1
-    trigger: numeric_state
-  conditions:
-  - condition: state
-    entity_id: input_boolean.treeow_531648_water_alerted
-    state: 'off'
-  actions:
-  - action: rest_command.klmfather
-    data:
-      title: 客厅加湿器水量已低于20%，请及时加水
-      desp: 客厅加湿器水量已低于20%，请及时加水
-  - action: rest_command.klmmother
-    data:
-      title: 客厅加湿器水量已低于20%，请及时加水
-      desp: 客厅加湿器水量已低于20%，请及时加水
-  - action: input_boolean.turn_on
-    target:
-      entity_id: input_boolean.treeow_531648_water_alerted
-  mode: single
-- id: '1792800000007'
-  alias: 客厅加湿器：晚上8点切低档
-  description: 晚上8点开机中的设备切换为手动一档（夜间静音）
-  triggers:
-  - at: '20:00:00'
-    trigger: time
-  conditions:
-  - condition: state
-    entity_id: switch.treeow_531648_switch
-    state: 'on'
-  actions:
-  - action: switch.turn_on
-    target:
-      entity_id: switch.treeow_531648_child_lock
-  - action: switch.turn_off
-    target:
-      entity_id: switch.treeow_531648_smart_mode_switch
-  - action: select.select_option
-    target:
-      entity_id: select.treeow_531648_mode
-    data:
-      option: manual
-  - action: select.select_option
-    target:
-      entity_id: select.treeow_531648_fan_speed
-    data:
-      option: 1gear
   mode: single
 - id: '1792800000008'
   alias: 客厅加湿器：早晨9点唤醒并检查
@@ -1245,27 +1123,21 @@
       title: 客厅加湿器已离线或关机超过1分钟，请检查
       desp: 客厅加湿器已离线或关机超过1分钟，请检查
   mode: single
-- id: '1792800000012'
-  alias: 次卧加湿器：加水后重置提醒
-  description: 水箱水量回升到30%以上时，解除低水量提醒标记，允许下次再提醒
+- id: '1792800000014'
+  alias: 加湿器水量定时播报
+  description: 每天早晨8点和晚上8点各推送一次，包含两台加湿器的当前水量
   triggers:
-  - entity_id: sensor.treeow_311806_water_table
-    above: 30
-    trigger: numeric_state
+  - at: '08:00:00'
+    trigger: time
+  - at: '20:00:00'
+    trigger: time
   actions:
-  - action: input_boolean.turn_off
-    target:
-      entity_id: input_boolean.treeow_311806_water_alerted
-  mode: single
-- id: '1792800000013'
-  alias: 客厅加湿器：加水后重置提醒
-  description: 水箱水量回升到30%以上时，解除低水量提醒标记，允许下次再提醒
-  triggers:
-  - entity_id: sensor.treeow_531648_water_table
-    above: 30
-    trigger: numeric_state
-  actions:
-  - action: input_boolean.turn_off
-    target:
-      entity_id: input_boolean.treeow_531648_water_alerted
+  - action: rest_command.klmfather
+    data:
+      title: 加湿器水量播报
+      desp: "次卧加湿器水量 {{ states('sensor.treeow_311806_water_table') }}%，客厅加湿器水量 {{ states('sensor.treeow_531648_water_table') }}%"
+  - action: rest_command.klmmother
+    data:
+      title: 加湿器水量播报
+      desp: "次卧加湿器水量 {{ states('sensor.treeow_311806_water_table') }}%，客厅加湿器水量 {{ states('sensor.treeow_531648_water_table') }}%"
   mode: single
