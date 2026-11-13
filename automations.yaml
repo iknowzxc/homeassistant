@@ -518,53 +518,7 @@
       entity_id: select.treeow_531648_mode
     data:
       option: manual
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 20
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 1gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 40
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 2gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 60
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 3gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 80
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 4gear
-    default:
-    - action: select.select_option
-      target:
-        entity_id: select.treeow_531648_fan_speed
-      data:
-        option: 5gear
+  - action: script.treeow_531648_apply_fan_speed
   mode: single
 - id: '1792800000002'
   alias: 客厅加湿器：湿度达标切换仅净化
@@ -596,53 +550,7 @@
       entity_id: select.treeow_531648_mode
     data:
       option: manual
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 20
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 1gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 40
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 2gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 60
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 3gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 80
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 4gear
-    default:
-    - action: select.select_option
-      target:
-        entity_id: select.treeow_531648_fan_speed
-      data:
-        option: 5gear
+  - action: script.treeow_531648_apply_fan_speed
   mode: single
 - id: '1792800000003'
   alias: 客厅加湿器：PM2.5超标自动净化
@@ -697,53 +605,7 @@
       entity_id: select.treeow_531648_mode
     data:
       option: manual
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 20
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 1gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 40
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 2gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 60
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 3gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 80
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 4gear
-    default:
-    - action: select.select_option
-      target:
-        entity_id: select.treeow_531648_fan_speed
-      data:
-        option: 5gear
+  - action: script.treeow_531648_apply_fan_speed
   mode: single
 - id: '1792800000004'
   alias: 客厅加湿器：空气达标切换低档
@@ -837,53 +699,7 @@
   - action: switch.turn_off
     target:
       entity_id: switch.treeow_531648_smart_mode_switch
-  - choose:
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 20
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 1gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 40
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 2gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 60
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 3gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
-        below: 80
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_531648_fan_speed
-        data:
-          option: 4gear
-    default:
-    - action: select.select_option
-      target:
-        entity_id: select.treeow_531648_fan_speed
-      data:
-        option: 5gear
+  - action: script.treeow_531648_apply_fan_speed
   mode: single
 - id: '1792800000008'
   alias: 客厅加湿器：早晨9点唤醒并检查
@@ -919,53 +735,7 @@
           entity_id: select.treeow_531648_mode
         data:
           option: manual
-      - choose:
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.treeow_531648_pm25
-            below: 20
-          sequence:
-          - action: select.select_option
-            target:
-              entity_id: select.treeow_531648_fan_speed
-            data:
-              option: 1gear
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.treeow_531648_pm25
-            below: 40
-          sequence:
-          - action: select.select_option
-            target:
-              entity_id: select.treeow_531648_fan_speed
-            data:
-              option: 2gear
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.treeow_531648_pm25
-            below: 60
-          sequence:
-          - action: select.select_option
-            target:
-              entity_id: select.treeow_531648_fan_speed
-            data:
-              option: 3gear
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.treeow_531648_pm25
-            below: 80
-          sequence:
-          - action: select.select_option
-            target:
-              entity_id: select.treeow_531648_fan_speed
-            data:
-              option: 4gear
-        default:
-        - action: select.select_option
-          target:
-            entity_id: select.treeow_531648_fan_speed
-          data:
-            option: 5gear
+      - action: script.treeow_531648_apply_fan_speed
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_531648_pm25
@@ -982,53 +752,7 @@
           entity_id: select.treeow_531648_mode
         data:
           option: manual
-      - choose:
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.treeow_531648_pm25
-            below: 20
-          sequence:
-          - action: select.select_option
-            target:
-              entity_id: select.treeow_531648_fan_speed
-            data:
-              option: 1gear
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.treeow_531648_pm25
-            below: 40
-          sequence:
-          - action: select.select_option
-            target:
-              entity_id: select.treeow_531648_fan_speed
-            data:
-              option: 2gear
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.treeow_531648_pm25
-            below: 60
-          sequence:
-          - action: select.select_option
-            target:
-              entity_id: select.treeow_531648_fan_speed
-            data:
-              option: 3gear
-        - conditions:
-          - condition: numeric_state
-            entity_id: sensor.treeow_531648_pm25
-            below: 80
-          sequence:
-          - action: select.select_option
-            target:
-              entity_id: select.treeow_531648_fan_speed
-            data:
-              option: 4gear
-        default:
-        - action: select.select_option
-          target:
-            entity_id: select.treeow_531648_fan_speed
-          data:
-            option: 5gear
+      - action: script.treeow_531648_apply_fan_speed
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_531648_pm25
