@@ -1,53 +1,53 @@
 # 客厅加湿器：按 PM2.5 设置档位
 # 供多个自动化复用，档位阈值只需在此处维护
-treeow_531648_apply_fan_speed:
+treeow_581914_apply_fan_speed:
   alias: 客厅加湿器：按PM2.5设置档位
   sequence:
   - choose:
     - conditions:
       - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
+        entity_id: sensor.treeow_581914_pm25
         below: 20
       sequence:
       - action: select.select_option
         target:
-          entity_id: select.treeow_531648_fan_speed
+          entity_id: select.treeow_581914_fan_speed
         data:
           option: 1gear
     - conditions:
       - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
+        entity_id: sensor.treeow_581914_pm25
         below: 40
       sequence:
       - action: select.select_option
         target:
-          entity_id: select.treeow_531648_fan_speed
+          entity_id: select.treeow_581914_fan_speed
         data:
           option: 2gear
     - conditions:
       - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
+        entity_id: sensor.treeow_581914_pm25
         below: 60
       sequence:
       - action: select.select_option
         target:
-          entity_id: select.treeow_531648_fan_speed
+          entity_id: select.treeow_581914_fan_speed
         data:
           option: 3gear
     - conditions:
       - condition: numeric_state
-        entity_id: sensor.treeow_531648_pm25
+        entity_id: sensor.treeow_581914_pm25
         below: 80
       sequence:
       - action: select.select_option
         target:
-          entity_id: select.treeow_531648_fan_speed
+          entity_id: select.treeow_581914_fan_speed
         data:
           option: 4gear
     default:
     - action: select.select_option
       target:
-        entity_id: select.treeow_531648_fan_speed
+        entity_id: select.treeow_581914_fan_speed
       data:
         option: 5gear
   mode: single
