@@ -29,4 +29,4 @@ rest_command:
     url: "https://wxpusher.zjiecode.com/api/send/message"
     method: POST
     content_type: "application/json"
-    payload: '{"appToken": "{{ app_token }}", "content": {{ report | tojson }}, "summary": "加湿器水量", "contentType": 1, "topicIds": [48733]}'
+    payload: '{"appToken": "{{ app_token }}", "content": {{ report | tojson }}, "summary": "加湿器水量", "contentType": 3, "topicIds": [48733]}'
