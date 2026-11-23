@@ -488,6 +488,129 @@
         data:
           option: sleep
   mode: single
+- id: '1792800000015'
+  alias: 次卧加湿器：白天按PM2.5动态调档
+  description: 白天(09:00-20:00)设备开机状态下，PM2.5越过各阈值时自动设置模式与档位：低于20睡眠，20~40手动一档，40~60手动二档，60~80手动三档，80以上手动四档
+  triggers:
+  - entity_id: sensor.treeow_311806_pm25
+    above: 20
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_311806_pm25
+    above: 40
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_311806_pm25
+    above: 60
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_311806_pm25
+    above: 80
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_311806_pm25
+    below: 80
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_311806_pm25
+    below: 60
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_311806_pm25
+    below: 40
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_311806_pm25
+    below: 20
+    for:
+      minutes: 1
+    trigger: numeric_state
+  conditions:
+  - condition: state
+    entity_id: switch.treeow_311806_switch
+    state: 'on'
+  - condition: time
+    after: '09:00:00'
+    before: '20:00:00'
+  actions:
+  - action: switch.turn_off
+    target:
+      entity_id: switch.treeow_311806_smart_mode_switch
+  - choose:
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_311806_pm25
+        below: 20
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: sleep
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_311806_pm25
+        below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: manual
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_fan_speed
+        data:
+          option: 1gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_311806_pm25
+        below: 60
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: manual
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_fan_speed
+        data:
+          option: 2gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_311806_pm25
+        below: 80
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_mode
+        data:
+          option: manual
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_311806_fan_speed
+        data:
+          option: 3gear
+    default:
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_311806_mode
+      data:
+        option: manual
+    - action: select.select_option
+      target:
+        entity_id: select.treeow_311806_fan_speed
+      data:
+        option: 4gear
+  mode: single
 - id: '1792800000001'
   alias: 客厅加湿器：湿度过低开加湿+净化
   description: 湿度低于50%持续1分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整
