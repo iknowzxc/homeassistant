@@ -229,13 +229,8 @@
   mode: single
 - id: '1792745808477'
   alias: 客厅空气净化器：按PM2.5浓度自动调档
-  description: PM2.5越过各阈值时开机/调档：0~20一档，20~30三档，30~40四档，40以上五档；均打开童锁
+  description: PM2.5越过各阈值时开机/调档：0~20一档，20~30二档，30~40三档，40~50四档，50以上五档；均打开童锁
   triggers:
-  - entity_id: sensor.treeow_214644_pm25
-    above: 10
-    for:
-      minutes: 1
-    trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     above: 20
     for:
@@ -252,6 +247,16 @@
       minutes: 1
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
+    above: 50
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
+    below: 50
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_214644_pm25
     below: 40
     for:
       minutes: 1
@@ -263,11 +268,6 @@
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 20
-    for:
-      minutes: 1
-    trigger: numeric_state
-  - entity_id: sensor.treeow_214644_pm25
-    below: 10
     for:
       minutes: 1
     trigger: numeric_state
@@ -298,11 +298,21 @@
         target:
           entity_id: select.treeow_214644_fan_speed_enum
         data:
-          option: 4gear
+          option: 3gear
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_214644_pm25
         below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 4gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 50
       sequence:
       - action: select.select_option
         target:
@@ -350,11 +360,21 @@
         target:
           entity_id: select.treeow_214644_fan_speed_enum
         data:
-          option: 4gear
+          option: 3gear
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_214644_pm25
         below: 40
+      sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.treeow_214644_fan_speed_enum
+        data:
+          option: 4gear
+    - conditions:
+      - condition: numeric_state
+        entity_id: sensor.treeow_214644_pm25
+        below: 50
       sequence:
       - action: select.select_option
         target:
