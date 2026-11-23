@@ -229,7 +229,7 @@
   mode: single
 - id: '1792745808477'
   alias: 客厅空气净化器：按PM2.5浓度自动调档
-  description: PM2.5越过各阈值时开机/调档：0~10一档，10~20二档，20~30三档，30~40四档，40以上五档；均打开童锁
+  description: PM2.5越过各阈值时开机/调档：0~20一档，20~30三档，30~40四档，40以上五档；均打开童锁
   triggers:
   - entity_id: sensor.treeow_214644_pm25
     above: 10
@@ -282,23 +282,13 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_214644_pm25
-        below: 10
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_214644_fan_speed_enum
-        data:
-          option: 2gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_214644_pm25
         below: 20
       sequence:
       - action: select.select_option
         target:
           entity_id: select.treeow_214644_fan_speed_enum
         data:
-          option: 3gear
+          option: 2gear
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_214644_pm25
@@ -344,23 +334,13 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_214644_pm25
-        below: 10
-      sequence:
-      - action: select.select_option
-        target:
-          entity_id: select.treeow_214644_fan_speed_enum
-        data:
-          option: 2gear
-    - conditions:
-      - condition: numeric_state
-        entity_id: sensor.treeow_214644_pm25
         below: 20
       sequence:
       - action: select.select_option
         target:
           entity_id: select.treeow_214644_fan_speed_enum
         data:
-          option: 3gear
+          option: 2gear
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_214644_pm25
