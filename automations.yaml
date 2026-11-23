@@ -898,3 +898,43 @@
         data:
           option: 1gear
   mode: single
+- id: '1792800000016'
+  alias: 加湿器水量报告推送
+  description: 每天08:00和20:00通过WxPusher主题推送两台加湿器的水量、湿度、室温和PM2.5
+  triggers:
+  - at: '08:00:00'
+    trigger: time
+  - at: '20:00:00'
+    trigger: time
+  actions:
+  - variables:
+      report: |
+        {%- macro line(name, water, hum, temp, pm, is_f) -%}
+        {%- set w_raw = states(water) -%}
+        {%- if w_raw in ['unknown', 'unavailable', ''] -%}
+        ⚪ {{ name }}：取不到数据
+        {%- else -%}
+        {%- set wi = w_raw | float(0) | round(0) | int -%}
+        {%- set h_raw = states(hum) -%}
+        {%- set h_out = '—' if h_raw in ['unknown', 'unavailable', ''] else (h_raw | float(0) | round(1)) -%}
+        {%- set t_raw = states(temp) -%}
+        {%- if t_raw in ['unknown', 'unavailable', ''] -%}
+        {%- set t_out = '—' -%}
+        {%- else -%}
+        {%- set tv = t_raw | float(0) -%}
+        {%- if is_f and tv > 50 -%}{%- set tv = (tv - 32) * 5 / 9 -%}{%- endif -%}
+        {%- set t_out = tv | round(1) -%}
+        {%- endif -%}
+        {%- set p_raw = states(pm) -%}
+        {%- set pm_out = 0 if p_raw in ['unknown', 'unavailable', '', 'None'] else (p_raw | float(0) | round(0) | int) -%}
+        {%- if wi >= 70 -%}🟢{%- elif wi >= 40 -%}🟡{%- elif wi >= 20 -%}🟠{%- else -%}🔴{%- endif %} {{ name }}：水箱 {{ wi }}%，当前湿度 {{ h_out }}%，室温 {{ t_out }}°C，PM2.5 {{ pm_out }}
+        {%- endif -%}
+        {%- endmacro -%}
+        【加湿器水量报告】
+        {{ line('次卧 G2 Pro', 'sensor.treeow_311806_water_table', 'sensor.treeow_311806_humidity', 'sensor.treeow_311806_temp_indoor', 'sensor.treeow_311806_pm25', false) }}
+        {{ line('客厅 G2 Pro', 'sensor.treeow_581914_water_table', 'sensor.treeow_581914_humidity', 'sensor.treeow_581914_temp_indoor', 'sensor.treeow_581914_pm25', true) }}
+  - action: rest_command.wxpusher_topic
+    data:
+      app_token: !secret wxpusher_app_token
+      report: "{{ report }}"
+  mode: single
