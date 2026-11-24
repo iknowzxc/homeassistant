@@ -949,7 +949,7 @@
         {%- endif -%}
         {%- set p_raw = states(pm) -%}
         {%- set pm_out = 0 if p_raw in ['unknown', 'unavailable', '', 'None'] else (p_raw | float(0) | round(0) | int) -%}
-        {%- if wi >= 70 -%}🟢{%- elif wi >= 40 -%}🟡{%- elif wi >= 20 -%}🟠{%- else -%}🔴{%- endif %} {{ name }}：水箱 {{ wi }}%，当前湿度 {{ h_out }}%，室温 {{ t_out }}°C，PM2.5 {{ pm_out }}{{ '  ' }}
+        {%- if wi >= 70 -%}🟢{%- elif wi >= 40 -%}🟡{%- elif wi >= 20 -%}🟠{%- else -%}🔴{%- endif %} {{ name }}：水箱 **{{ wi }}%**，当前湿度 {{ h_out }}%，室温 {{ t_out }}°C，PM2.5 {{ pm_out }}{{ '  ' }}
         {%- endif -%}
         {%- endif -%}
         {%- endmacro -%}
