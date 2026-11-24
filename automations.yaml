@@ -900,7 +900,7 @@
   mode: single
 - id: '1792800000016'
   alias: 加湿器水量报告推送
-  description: 任一加湿器水量低于50%或低于20%并持续1分钟时，通过WxPusher主题推送两台加湿器的水量、湿度、室温和PM2.5
+  description: 任一加湿器水量低于50%或低于20%并持续1分钟时，通过WxPusher主题只推送该加湿器的水量、湿度、室温和PM2.5
   triggers:
   - entity_id: sensor.treeow_311806_water_table
     below: 50
@@ -925,12 +925,18 @@
   actions:
   - variables:
       report: |
-        {%- macro line(name, water, hum, temp, pm, is_f) -%}
+        {%- set cutoff = (trigger.get('below') or 50) | float(50) -%}
+        {%- set trig = trigger.get('entity_id', '') -%}
+        {%- macro line(name, water, hum, temp, pm, is_f, cutoff, trig) -%}
         {%- set w_raw = states(water) -%}
         {%- if w_raw in ['unknown', 'unavailable', ''] -%}
+        {%- if water == trig -%}
         ⚪ {{ name }}：取不到数据{{ '  ' }}
+        {%- endif -%}
         {%- else -%}
-        {%- set wi = w_raw | float(0) | round(0) | int -%}
+        {%- set wf = w_raw | float(0) -%}
+        {%- set wi = wf | round(0) | int -%}
+        {%- if wf < cutoff -%}
         {%- set h_raw = states(hum) -%}
         {%- set h_out = '—' if h_raw in ['unknown', 'unavailable', ''] else (h_raw | float(0) | round(1)) -%}
         {%- set t_raw = states(temp) -%}
@@ -945,10 +951,11 @@
         {%- set pm_out = 0 if p_raw in ['unknown', 'unavailable', '', 'None'] else (p_raw | float(0) | round(0) | int) -%}
         {%- if wi >= 70 -%}🟢{%- elif wi >= 40 -%}🟡{%- elif wi >= 20 -%}🟠{%- else -%}🔴{%- endif %} {{ name }}：水箱 {{ wi }}%，当前湿度 {{ h_out }}%，室温 {{ t_out }}°C，PM2.5 {{ pm_out }}{{ '  ' }}
         {%- endif -%}
+        {%- endif -%}
         {%- endmacro -%}
-        【加湿器水量报告】  
-        {{ line('次卧 G2 Pro', 'sensor.treeow_311806_water_table', 'sensor.treeow_311806_humidity', 'sensor.treeow_311806_temp_indoor', 'sensor.treeow_311806_pm25', false) }}
-        {{ line('客厅 G2 Pro', 'sensor.treeow_581914_water_table', 'sensor.treeow_581914_humidity', 'sensor.treeow_581914_temp_indoor', 'sensor.treeow_581914_pm25', true) }}
+        【加湿器水量报告】{{ '  ' }}
+        {{ line('次卧 G2 Pro', 'sensor.treeow_311806_water_table', 'sensor.treeow_311806_humidity', 'sensor.treeow_311806_temp_indoor', 'sensor.treeow_311806_pm25', false, cutoff, trig) }}
+        {{ line('客厅 G2 Pro', 'sensor.treeow_581914_water_table', 'sensor.treeow_581914_humidity', 'sensor.treeow_581914_temp_indoor', 'sensor.treeow_581914_pm25', true, cutoff, trig) }}
   - action: rest_command.wxpusher_topic
     data:
       app_token: !secret wxpusher_app_token
