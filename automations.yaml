@@ -900,12 +900,28 @@
   mode: single
 - id: '1792800000016'
   alias: 加湿器水量报告推送
-  description: 每天08:00和20:00通过WxPusher主题推送两台加湿器的水量、湿度、室温和PM2.5
+  description: 任一加湿器水量低于50%或低于20%并持续1分钟时，通过WxPusher主题推送两台加湿器的水量、湿度、室温和PM2.5
   triggers:
-  - at: '08:00:00'
-    trigger: time
-  - at: '20:00:00'
-    trigger: time
+  - entity_id: sensor.treeow_311806_water_table
+    below: 50
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_311806_water_table
+    below: 20
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_581914_water_table
+    below: 50
+    for:
+      minutes: 1
+    trigger: numeric_state
+  - entity_id: sensor.treeow_581914_water_table
+    below: 20
+    for:
+      minutes: 1
+    trigger: numeric_state
   actions:
   - variables:
       report: |
