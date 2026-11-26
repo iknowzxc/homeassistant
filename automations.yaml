@@ -900,79 +900,40 @@
   mode: single
 - id: '1792800000016'
   alias: 加湿器水量报告推送
-  description: 水位每下降一档(10%)且低于50%时推送；处于同一水位不重复提醒；补水回升20%以上重新武装
-  # 用 state 触发而不是 numeric_state below：后者没有迟滞，云端阶梯水位回踩阈值上方再掉下来会二次推送
+  description: 每天 07:00 推送两台加湿器的水箱水量、当前湿度、室温与 PM2.5
   triggers:
-  - entity_id:
-    - sensor.treeow_311806_water_table
-    - sensor.treeow_581914_water_table
-    not_to:
-    - unknown
-    - unavailable
-    for:
-      minutes: 1
-    trigger: state
+  - at: 07:00:00
+    trigger: time
   actions:
   - variables:
-      dev: '{{ "treeow_311806" if "treeow_311806" in trigger.entity_id else "treeow_581914" }}'
-      water: '{{ states("sensor." ~ dev ~ "_water_table") | float(-1) }}'
-  - variables:
-      notified: '{{ states("input_number." ~ dev ~ "_water_notified") | float(100) }}'
-  - choose:
-    # 补水回升 20 点以上才重新武装；回踩 10 点属传感器抖动，不重置
-    - conditions:
-      - condition: template
-        value_template: '{{ water | float(0) >= notified | float(0) + 20 }}'
-      sequence:
-      - action: input_number.set_value
-        target:
-          entity_id: 'input_number.{{ dev }}_water_notified'
-        data:
-          value: '{{ water | float(0) | round(0) | int }}'
-    # 只认 50/20 两档：低于上次推送值 5 点以上才算新告警，同一水位永不重复
-    - conditions:
-      - condition: template
-        value_template: >-
-          {% set n = notified | float(100) %}{% set w = water | float(-1) %}
-          {{ w < 50 and w <= n - 5 and (n >= 50 or (n >= 20 and w < 20)) }}
-      sequence:
-      - action: input_number.set_value
-        target:
-          entity_id: 'input_number.{{ dev }}_water_notified'
-        data:
-          value: '{{ water | float(0) | round(0) | int }}'
-      - variables:
-          # cutoff 固定 50：正文只列 <50 的机器；客厅 temp_indoor 上报华氏度，按 >50 探测后转摄氏
-          report: |
-            {%- macro line(name, water, hum, temp, pm, is_f) -%}
-            {%- set w_raw = states(water) -%}
-            {%- if w_raw in ['unknown', 'unavailable', ''] -%}
-            {%- else -%}
-            {%- set wf = w_raw | float(0) -%}
-            {%- set wi = wf | round(0) | int -%}
-            {%- if wf < 50 -%}
-            {%- set h_raw = states(hum) -%}
-            {%- set h_out = '—' if h_raw in ['unknown', 'unavailable', ''] else (h_raw | float(0) | round(1)) -%}
-            {%- set t_raw = states(temp) -%}
-            {%- if t_raw in ['unknown', 'unavailable', ''] -%}
-            {%- set t_out = '—' -%}
-            {%- else -%}
-            {%- set tv = t_raw | float(0) -%}
-            {%- if is_f and tv > 50 -%}{%- set tv = (tv - 32) * 5 / 9 -%}{%- endif -%}
-            {%- set t_out = tv | round(1) -%}
-            {%- endif -%}
-            {%- set p_raw = states(pm) -%}
-            {%- set pm_out = 0 if p_raw in ['unknown', 'unavailable', '', 'None'] else (p_raw | float(0) | round(0) | int) -%}
-            {%- if wi >= 70 -%}🟢{%- elif wi >= 40 -%}🟡{%- elif wi >= 20 -%}🟠{%- else -%}🔴{%- endif %} {{ name }}：水箱 **{{ wi }}%**，当前湿度 {{ h_out }}%，室温 {{ t_out }}°C，PM2.5 {{ pm_out }}{{ '  ' }}
-            {%- endif -%}
-            {%- endif -%}
-            {%- endmacro -%}
-            【加湿器水量报告】{{ '  ' }}
-            {{ line('次卧 G2 Pro', 'sensor.treeow_311806_water_table', 'sensor.treeow_311806_humidity', 'sensor.treeow_311806_temp_indoor', 'sensor.treeow_311806_pm25', false) }}
-            {{ line('客厅 G2 Pro', 'sensor.treeow_581914_water_table', 'sensor.treeow_581914_humidity', 'sensor.treeow_581914_temp_indoor', 'sensor.treeow_581914_pm25', true) }}
-      - action: rest_command.wxpusher_topic
-        data:
-          app_token: !secret wxpusher_app_token
-          report: '{{ report }}'
-    default: []
+      report: |
+        {%- macro line(name, water, hum, temp, pm, is_f) -%}
+        {%- set w_raw = states(water) -%}
+        {%- if w_raw in ['unknown', 'unavailable', ''] -%}
+        ⚪ {{ name }}：取不到数据{{ '  ' }}
+        {%- else -%}
+        {%- set wi = w_raw | float(0) | round(0) | int -%}
+        {%- set h_raw = states(hum) -%}
+        {%- set h_out = '—' if h_raw in ['unknown', 'unavailable', ''] else (h_raw | float(0) | round(1)) -%}
+        {%- set t_raw = states(temp) -%}
+        {%- if t_raw in ['unknown', 'unavailable', ''] -%}
+        {%- set t_out = '—' -%}
+        {%- else -%}
+        {#- 客厅 temp_indoor 上报华氏度：正常室温不可能 >50°C，用它探测单位后再转摄氏 -#}
+        {%- set tv = t_raw | float(0) -%}
+        {%- if is_f and tv > 50 -%}{%- set tv = (tv - 32) * 5 / 9 -%}{%- endif -%}
+        {%- set t_out = tv | round(1) -%}
+        {%- endif -%}
+        {%- set p_raw = states(pm) -%}
+        {%- set pm_out = 0 if p_raw in ['unknown', 'unavailable', '', 'None'] else (p_raw | float(0) | round(0) | int) -%}
+        {%- if wi >= 70 -%}🟢{%- elif wi >= 40 -%}🟡{%- elif wi >= 20 -%}🟠{%- else -%}🔴{%- endif %} {{ name }}：水箱 **{{ wi }}%**，当前湿度 {{ h_out }}%，室温 {{ t_out }}°C，PM2.5 {{ pm_out }}{{ '  ' }}
+        {%- endif -%}
+        {%- endmacro -%}
+        【加湿器水量报告】{{ '  ' }}
+        {{ line('次卧 G2 Pro', 'sensor.treeow_311806_water_table', 'sensor.treeow_311806_humidity', 'sensor.treeow_311806_temp_indoor', 'sensor.treeow_311806_pm25', false) }}
+        {{ line('客厅 G2 Pro', 'sensor.treeow_581914_water_table', 'sensor.treeow_581914_humidity', 'sensor.treeow_581914_temp_indoor', 'sensor.treeow_581914_pm25', true) }}
+  - action: rest_command.wxpusher_topic
+    data:
+      app_token: !secret wxpusher_app_token
+      report: '{{ report }}'
   mode: single

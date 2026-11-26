@@ -17,7 +17,7 @@
 ## 改 YAML 时的硬规则
 
 - 设备唤醒序列的六步顺序（开整机 → 开童锁 → 关 `smart_mode_switch` → 写 `mode_switch` → 等 10 秒 → 写 `mode` + 档位）不能重排，10 秒 `delay` 不能删。原因见 README。
-- 阈值类逻辑不要用裸 `numeric_state below:`，`water_table` 之类的云端阶梯值会回踩触发重复告警；去抖方式见 README「水量推送的去抖机制」。
+- 水位推送现在是每天 07:00 定时播报，不要把它改回不带迟滞的 `numeric_state below:` 即时告警 —— 云端阶梯水位会回踩阈值上方再掉下来，导致同一水位重复推送（历史上真实发生过）。真要恢复即时告警，先看 git 历史里的去抖方案。
 - 客厅 `temp_indoor` 是华氏度，转摄氏用 `> 50` 探测，不要想当然当摄氏。
 - K3（`214644`）的档位实体是 `fan_speed_enum`，且没有 `mode_switch`；G2 Pro 是 `fan_speed` + `mode_switch`。
 - 不要引用 `531648`（已废弃设备 ID），也不要改那些只存在于 DB 历史里的实体。
