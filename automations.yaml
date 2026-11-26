@@ -901,6 +901,7 @@
 - id: '1792800000016'
   alias: 加湿器水量报告推送
   description: 水位每下降一档(10%)且低于50%时推送；处于同一水位不重复提醒；补水回升20%以上重新武装
+  # 用 state 触发而不是 numeric_state below：后者没有迟滞，云端阶梯水位回踩阈值上方再掉下来会二次推送
   triggers:
   - entity_id:
     - sensor.treeow_311806_water_table
@@ -918,6 +919,7 @@
   - variables:
       notified: '{{ states("input_number." ~ dev ~ "_water_notified") | float(100) }}'
   - choose:
+    # 补水回升 20 点以上才重新武装；回踩 10 点属传感器抖动，不重置
     - conditions:
       - condition: template
         value_template: '{{ water | float(0) >= notified | float(0) + 20 }}'
@@ -927,6 +929,7 @@
           entity_id: 'input_number.{{ dev }}_water_notified'
         data:
           value: '{{ water | float(0) | round(0) | int }}'
+    # 只认 50/20 两档：低于上次推送值 5 点以上才算新告警，同一水位永不重复
     - conditions:
       - condition: template
         value_template: >-
@@ -939,6 +942,7 @@
         data:
           value: '{{ water | float(0) | round(0) | int }}'
       - variables:
+          # cutoff 固定 50：正文只列 <50 的机器；客厅 temp_indoor 上报华氏度，按 >50 探测后转摄氏
           report: |
             {%- macro line(name, water, hum, temp, pm, is_f) -%}
             {%- set w_raw = states(water) -%}
