@@ -30,3 +30,22 @@ rest_command:
     method: POST
     content_type: "application/json"
     payload: '{"appToken": "{{ app_token }}", "content": {{ report | tojson }}, "summary": "加湿器水量", "contentType": 3, "topicIds": [48733]}'
+
+# 水量提醒去抖：记录每台加湿器"上次已推送的水位"（100 = 已重新武装）
+input_number:
+  treeow_311806_water_notified:
+    name: 次卧水量提醒水位
+    min: 0
+    max: 100
+    step: 1
+    initial: 100
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+  treeow_581914_water_notified:
+    name: 客厅水量提醒水位
+    min: 0
+    max: 100
+    step: 1
+    initial: 100
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
