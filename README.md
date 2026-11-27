@@ -6,8 +6,8 @@ Home Assistant（HAOS）在 192.168.5.249 上 `/config` 的 YAML 层版本库。
 
 ## 文件构成
 
-- `configuration.yaml` — 加载 `default_config`、frontend 主题目录、include 三个 YAML，定义 `rest_command`（Server酱 ×2、WxPusher ×1）与 `input_number` helper
-- `automations.yaml` — 16 条自动化（全部业务逻辑都在这里）
+- `configuration.yaml` — 加载 `default_config`、frontend 主题目录、include 三个 YAML，定义 `rest_command`（Server酱 ×2、WxPusher ×1）与两个 `input_number` 低水量状态 helper与 `input_number` helper
+- `automations.yaml` — 17 条自动化（全部业务逻辑都在这里）
 - `scripts.yaml` — 1 个可复用脚本 `treeow_581914_apply_fan_speed`
 - `secrets.yaml.example` — `secrets.yaml` 的字段清单（真文件不入库）
 - 不入库但线上存在：`secrets.yaml`、`scenes.yaml`、`themes/`、`.storage/`、`home-assistant_v2.db`（见 `.gitignore`）
@@ -33,7 +33,7 @@ Home Assistant（HAOS）在 192.168.5.249 上 `/config` 的 YAML 层版本库。
 - **客厅（581914）的 `temp_indoor` 上报华氏度。** 需要摄氏时用 `{{ (tv - 32) * 5 / 9 }}`，判断条件是 `tv > 50`（正常室温不可能 >50°C，所以这是安全的单位探测），不要把判断写成"有没有单位"。
 - `water_table` 是十进制阶梯值（0/10/20…/100），且来自云端轮询，会出现 20 秒内 40→50→40 的抖动。任何基于它的阈值判断都必须容忍这种回踩。
 
-## 自动化分组（16 条）
+## 自动化分组（17 条）
 
 次卧 G2 Pro（7 条）
 - 湿度 <50 持续 1 分钟：开加湿+净化，切 humidify，10 秒后按时间段 manual/sleep，1 档
@@ -52,8 +52,9 @@ Home Assistant（HAOS）在 192.168.5.249 上 `/config` 的 YAML 层版本库。
 - PM2.5 五档映射：<20 → 2gear，20/30/40/50 分界 → 3/4/5/6 档
 - 09:00 开机后延时 2 分钟复查再定档
 
-推送（1 条）
-- `加湿器水量报告推送`（id `1792800000016`）：每天 07:00 定时推一次，WxPusher 主题 48733，详见下节
+推送（2 条）
+- `加湿器水量报告推送`（id `1792800000016`）：每天 07:00 定时推一次全量水位，详见下节
+- `加湿器低水量提醒`（id `1792800000017`）：某台降到 ≤20% 时推一次，加水后才会再推，详见下节
 
 ## 不变量 —— 改任何一条自动化前先读这段
 
@@ -68,16 +69,29 @@ Home Assistant（HAOS）在 192.168.5.249 上 `/config` 的 YAML 层版本库。
 
 `mode_switch` 与 `mode` 是两个维度，不是二选一；先写前者，10 秒后再写后者。
 
-## 水量推送（每天 07:00）
+## 水量推送（两条）
 
-一条 `time` 触发器（`at: 07:00:00`），不依赖任何 helper，也没有阈值判断：
+都走 `rest_command.wxpusher_topic`（`contentType: 3` markdown，`topicIds: [48733]` 硬编码在 `configuration.yaml`）。
 
-- 正文固定两行（次卧 G2 Pro、客厅 G2 Pro），每行 = 水位 emoji + 名称 + 水箱百分比 + 当前湿度 + 室温 + PM2.5，行尾两个空格做 markdown 硬换行
-- emoji 按水位分档：🟢 ≥70、🟡 40–69、🟠 20–39、🔴 <20；某台读不到数时该台输出 `⚪ 名称：取不到数据`
-- 客厅 `temp_indoor` 上报华氏度，模板里按 `>50` 探测后转摄氏；湿度取不到显示 `—`，PM2.5 取不到显示 `0`
-- 消息走 `rest_command.wxpusher_topic`（`contentType: 3` markdown，`topicIds: [48733]` 硬编码在 `configuration.yaml`）
+### 1. 每日报告：`加湿器水量报告推送`
 
-历史：这里曾是"跌破 50%/20% 即时推送"，因为云端阶梯水位在阈值上方来回抖动会重复推送（同一 40% 夜里推两次），一度改成 `input_number` 记录已推送水位 + 补水重武装的去抖方案，最终按用户要求收敛为每日一次定时播报；阈值触发与那两个 helper 已删除，需要时从 git 历史取回。
+`time` 触发器 `at: 07:00:00`，不依赖 helper，也没有阈值判断：
+
+- 正文固定两行（次卧、客厅），每行 = 水位 emoji + 名称 + 水箱百分比 + 当前湿度 + 室温 + PM2.5，行尾两个空格做 markdown 硬换行
+- emoji：🟢 ≥70、🟡 40–69、🟠 20–39、🔴 <20；某台读不到数输出 `⚪ 名称：取不到数据`
+- 客厅 `temp_indoor` 上报华氏度，模板按 `>50` 探测后转摄氏；湿度取不到显示 `—`，PM2.5 取不到显示 `0`
+
+### 2. 低水量提醒：`加湿器低水量提醒`
+
+标题 `【加湿器水量提醒】`，只列 ≤20% 的机器（🟠 20、🔴 <20），字段与每日报告一致。
+
+- 状态存在 `input_number.treeow_<设备ID>_water_notified`：`100` = 已武装（还没提醒过），其他值 = 本轮已提醒过的水位。`initial: 100`
+- 触发 A（水位变化）：两台 `water_table` 的 `state` 变化立即判断，**故意不加 `for:`** —— 这台传感器在 10/20 之间会每几秒来回跳，加 1 分钟确认会让真实的低水位永远等不到确认
+- 触发 B（重新武装）：`numeric_state above: 40` + `for: 5 minutes`，即水位升过 40% 并保持 5 分钟才认定"加水了"，把 helper 写回 100
+- 推送分支：`water <= 20` 且 `notified > 20` → 推送并把 helper 写成本次水位；之后同一轮缺水无论怎么抖动都不再推（`notified` 已 ≤20）
+- 边界：补水只到 40% 或更低时不算重新武装（`above: 40` 不含 40），需再补一次；HA 重启或断电恢复不会补发（没有 start 触发器），此时靠每日 07:00 报告兜底
+
+历史：这套逻辑的第一版是"跌破 50%/20% 即时推送"，因为云端阶梯水位在阈值附近回踩，同一 40% 一夜推了两次；去抖参数（`for: 1 minute`、相对回升 +20）在真实数据上仍会漏（抖动让 for 永远等不到）或重复（+20 回弹被当成加水），最终按上面的形状收敛。改这些参数前先用 recorder 历史回放验证一遍。
 
 ## 部署流程（改完必须走完）
 

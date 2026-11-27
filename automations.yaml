@@ -937,3 +937,85 @@
       app_token: !secret wxpusher_app_token
       report: '{{ report }}'
   mode: single
+- id: '1792800000017'
+  alias: 加湿器低水量提醒
+  description: 某台水量 <=20% 时推送一次，同一轮缺水不重复提醒，加水回升 20 点以上后才重新武装
+  # 用 state 触发而非 numeric_state below：云端阶梯水位会在阈值附近回踩，没有迟滞就会反复跨界
+  triggers:
+  # 水位一变就判断（不加 for：这台传感器的 10/20 会每几秒来回跳，加 for 会让真实的低水位永远等不到确认）
+  - id: level
+    entity_id:
+    - sensor.treeow_311806_water_table
+    - sensor.treeow_581914_water_table
+    not_to:
+    - unknown
+    - unavailable
+    trigger: state
+  # 加水判定：水位升过 40% 并保持 5 分钟才算真补水（瞬时回弹不算），才重新武装
+  - id: refill
+    entity_id:
+    - sensor.treeow_311806_water_table
+    - sensor.treeow_581914_water_table
+    above: 40
+    for:
+      minutes: 5
+    trigger: numeric_state
+  actions:
+  - variables:
+      dev: '{{ "treeow_311806" if "treeow_311806" in trigger.entity_id else "treeow_581914" }}'
+      water: '{{ states("sensor." ~ dev ~ "_water_table") | float(-1) }}'
+  - variables:
+      notified: '{{ states("input_number." ~ dev ~ "_water_notified") | float(100) }}'
+  - choose:
+    - conditions:
+      - condition: trigger
+        id: refill
+      sequence:
+      - action: input_number.set_value
+        target:
+          entity_id: 'input_number.{{ dev }}_water_notified'
+        data:
+          value: 100
+    # <=20% 且本轮还没提醒过 → 推送一次并把当前水位记下来，之后不再重复
+    - conditions:
+      - condition: template
+        value_template: '{{ water | float(0) <= 20 and notified | float(100) > 20 }}'
+      sequence:
+      - action: input_number.set_value
+        target:
+          entity_id: 'input_number.{{ dev }}_water_notified'
+        data:
+          value: '{{ water | float(0) | round(0) | int }}'
+      - variables:
+          # 只列 <=20% 的机器；客厅 temp_indoor 上报华氏度，按 >50 探测后转摄氏
+          report: |
+            {%- macro line(name, water, hum, temp, pm, is_f) -%}
+            {%- set w_raw = states(water) -%}
+            {%- if w_raw not in ['unknown', 'unavailable', ''] -%}
+            {%- set wi = w_raw | float(0) | round(0) | int -%}
+            {%- if wi <= 20 -%}
+            {%- set h_raw = states(hum) -%}
+            {%- set h_out = '—' if h_raw in ['unknown', 'unavailable', ''] else (h_raw | float(0) | round(1)) -%}
+            {%- set t_raw = states(temp) -%}
+            {%- if t_raw in ['unknown', 'unavailable', ''] -%}
+            {%- set t_out = '—' -%}
+            {%- else -%}
+            {%- set tv = t_raw | float(0) -%}
+            {%- if is_f and tv > 50 -%}{%- set tv = (tv - 32) * 5 / 9 -%}{%- endif -%}
+            {%- set t_out = tv | round(1) -%}
+            {%- endif -%}
+            {%- set p_raw = states(pm) -%}
+            {%- set pm_out = 0 if p_raw in ['unknown', 'unavailable', '', 'None'] else (p_raw | float(0) | round(0) | int) -%}
+            {%- if wi >= 20 -%}🟠{%- else -%}🔴{%- endif %} {{ name }}：水箱 **{{ wi }}%**，当前湿度 {{ h_out }}%，室温 {{ t_out }}°C，PM2.5 {{ pm_out }}{{ '  ' }}
+            {%- endif -%}
+            {%- endif -%}
+            {%- endmacro -%}
+            【加湿器水量提醒】{{ '  ' }}
+            {{ line('次卧 G2 Pro', 'sensor.treeow_311806_water_table', 'sensor.treeow_311806_humidity', 'sensor.treeow_311806_temp_indoor', 'sensor.treeow_311806_pm25', false) }}
+            {{ line('客厅 G2 Pro', 'sensor.treeow_581914_water_table', 'sensor.treeow_581914_humidity', 'sensor.treeow_581914_temp_indoor', 'sensor.treeow_581914_pm25', true) }}
+      - action: rest_command.wxpusher_topic
+        data:
+          app_token: !secret wxpusher_app_token
+          report: '{{ report }}'
+    default: []
+  mode: single

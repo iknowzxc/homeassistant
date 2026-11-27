@@ -30,3 +30,21 @@ rest_command:
     method: POST
     content_type: "application/json"
     payload: '{"appToken": "{{ app_token }}", "content": {{ report | tojson }}, "summary": "加湿器水量", "contentType": 3, "topicIds": [48733]}'
+# 低水量提醒（<=20%）的"只推一次"状态：100 表示已武装（还没提醒过），否则记录已提醒过的水位
+input_number:
+  treeow_311806_water_notified:
+    name: 次卧低水量提醒
+    min: 0
+    max: 100
+    step: 1
+    initial: 100
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
+  treeow_581914_water_notified:
+    name: 客厅低水量提醒
+    min: 0
+    max: 100
+    step: 1
+    initial: 100
+    unit_of_measurement: "%"
+    icon: mdi:water-percent
