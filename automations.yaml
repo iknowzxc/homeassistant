@@ -935,6 +935,7 @@
   - action: rest_command.wxpusher_topic
     data:
       app_token: !secret wxpusher_app_token
+      summary: 加湿器水量
       report: '{{ report }}'
   mode: single
 - id: '1792800000017'
@@ -1016,6 +1017,34 @@
       - action: rest_command.wxpusher_topic
         data:
           app_token: !secret wxpusher_app_token
+          summary: 加湿器水量
           report: '{{ report }}'
     default: []
   mode: single
+- id: '1792800000018'
+  alias: 设备离线提醒
+  description: 任一 Treeow 设备离线持续1分钟时通过WxPusher主题推送；HA 启动阶段不提醒
+  triggers:
+  - entity_id:
+    - switch.treeow_311806_switch
+    - switch.treeow_581914_switch
+    - switch.treeow_214644_switch
+    to: unavailable
+    for:
+      minutes: 1
+    trigger: state
+  conditions:
+  # 启动时实体从"无"直接变为 unavailable（from_state 为 None），过滤掉以免每次重启误报
+  - condition: template
+    value_template: '{{ trigger.from_state is not none }}'
+  actions:
+  - variables:
+      name: '{{ {"switch.treeow_311806_switch": "次卧 G2 Pro", "switch.treeow_581914_switch": "客厅 G2 Pro", "switch.treeow_214644_switch": "客厅 K3 净化器"}.get(trigger.entity_id, trigger.entity_id) }}'
+  - action: rest_command.wxpusher_topic
+    data:
+      app_token: !secret wxpusher_app_token
+      summary: 设备离线
+      report: |
+        【设备离线提醒】{{ '  ' }}
+        ⚪ {{ name }}：已离线超过 1 分钟{{ '  ' }}
+  mode: queued
