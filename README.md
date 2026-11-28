@@ -36,7 +36,7 @@ Home Assistant（HAOS）在 192.168.5.249 上 `/config` 的 YAML 层版本库。
 ## 自动化分组（17 条）
 
 次卧 G2 Pro（7 条）
-- 湿度 <45 持续 1 分钟：开加湿+净化，切 humidify，10 秒后按时间段 manual/sleep，1 档
+- 湿度 <45 持续 15 秒：开加湿+净化，切 humidify，10 秒后按时间段 manual/sleep，1 档
 - 湿度 >50：切 purify（PM2.5 ≥20 走净化 1 档，否则 sleep）
 - PM2.5 >20：开净化，保持当前 humidify/purify
 - PM2.5 <10：切 sleep
@@ -110,7 +110,7 @@ Home Assistant（HAOS）在 192.168.5.249 上 `/config` 的 YAML 层版本库。
 recorder 库 `/config/home-assistant_v2.db` 是唯一可靠的事实来源（无需 token）：
 
 - `states` + `states_meta` 按 `last_updated_ts` 排序，可回放任意实体的状态序列
-- 带 `for: minutes: 1` 的触发器，自动化实体状态变化时间 = 传感器状态变化时间 + 60 秒，可据此把"某次推送"精确对应到"哪次跨界"
+- 带 `for:` 的触发器，自动化实体状态变化时间 = 传感器状态变化时间 + for 时长，可据此把"某次推送"精确对应到"哪次跨界"
 - 不要 `cat` 这个库（170 MB+），用 `sqlite3` join 查询
 
 ## 凭据

@@ -1,11 +1,11 @@
 - id: '1792741959341'
   alias: 次卧加湿器：湿度过低开加湿+净化
-  description: 湿度低于45%持续1分钟，开机并设为加湿+净化模式、一档
+  description: 湿度低于45%持续15秒，开机并设为加湿+净化模式、一档
   triggers:
   - entity_id: sensor.treeow_311806_humidity
     below: 45
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -53,7 +53,7 @@
   - entity_id: sensor.treeow_311806_humidity
     above: 50
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   actions:
   - choose:
@@ -123,12 +123,12 @@
   mode: single
 - id: '1792741990335'
   alias: 次卧空气净化器：PM2.5超标自动净化
-  description: PM2.5高于20持续1分钟：湿度偏低开加湿+净化，湿度正常开仅净化，均为一档
+  description: PM2.5高于20持续15秒：湿度偏低开加湿+净化，湿度正常开仅净化，均为一档
   triggers:
   - entity_id: sensor.treeow_311806_pm25
     above: 20
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -194,12 +194,12 @@
   mode: single
 - id: '1792742003391'
   alias: 次卧加湿器：空气达标切换睡眠
-  description: PM2.5回落到10以下持续1分钟且湿度不低于45%时进入睡眠模式
+  description: PM2.5回落到10以下持续15秒且湿度不低于45%时进入睡眠模式
   triggers:
   - entity_id: sensor.treeow_311806_pm25
     below: 10
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   conditions:
   - condition: numeric_state
@@ -234,42 +234,42 @@
   - entity_id: sensor.treeow_214644_pm25
     above: 20
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     above: 30
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     above: 40
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     above: 50
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 50
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 40
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 30
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_214644_pm25
     below: 20
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -495,42 +495,42 @@
   - entity_id: sensor.treeow_311806_pm25
     above: 20
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_311806_pm25
     above: 40
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_311806_pm25
     above: 60
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_311806_pm25
     above: 80
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_311806_pm25
     below: 80
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_311806_pm25
     below: 60
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_311806_pm25
     below: 40
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_311806_pm25
     below: 20
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   conditions:
   - condition: state
@@ -613,12 +613,12 @@
   mode: single
 - id: '1792800000001'
   alias: 客厅加湿器：湿度过低开加湿+净化
-  description: 湿度低于45%持续1分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整
+  description: 湿度低于45%持续15秒，开机并设为加湿+净化模式，档位按PM2.5动态调整
   triggers:
   - entity_id: sensor.treeow_581914_humidity
     below: 45
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -645,12 +645,12 @@
   mode: single
 - id: '1792800000002'
   alias: 客厅加湿器：湿度达标切换仅净化
-  description: 湿度升到55%持续1分钟后切换为仅净化模式，档位按PM2.5动态调整
+  description: 湿度升到55%持续15秒后切换为仅净化模式，档位按PM2.5动态调整
   triggers:
   - entity_id: sensor.treeow_581914_humidity
     above: 55
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -677,12 +677,12 @@
   mode: single
 - id: '1792800000003'
   alias: 客厅加湿器：PM2.5超标自动净化
-  description: PM2.5高于20持续1分钟：湿度偏低开加湿+净化，湿度正常开仅净化，档位按PM2.5动态调整
+  description: PM2.5高于20持续15秒：湿度偏低开加湿+净化，湿度正常开仅净化，档位按PM2.5动态调整
   triggers:
   - entity_id: sensor.treeow_581914_pm25
     above: 20
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   actions:
   - action: switch.turn_on
@@ -732,12 +732,12 @@
   mode: single
 - id: '1792800000004'
   alias: 客厅加湿器：空气达标切换低档
-  description: PM2.5回落到10以下持续1分钟且湿度不低于45%时，切换为仅净化一档
+  description: PM2.5回落到10以下持续15秒且湿度不低于45%时，切换为仅净化一档
   triggers:
   - entity_id: sensor.treeow_581914_pm25
     below: 10
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   conditions:
   - condition: numeric_state
@@ -777,42 +777,42 @@
   - entity_id: sensor.treeow_581914_pm25
     above: 20
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_581914_pm25
     above: 40
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_581914_pm25
     above: 60
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_581914_pm25
     above: 80
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_581914_pm25
     below: 80
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_581914_pm25
     below: 60
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_581914_pm25
     below: 40
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   - entity_id: sensor.treeow_581914_pm25
     below: 20
     for:
-      minutes: 1
+      seconds: 15
     trigger: numeric_state
   conditions:
   - condition: state
