@@ -613,10 +613,10 @@
   mode: single
 - id: '1792800000001'
   alias: 客厅加湿器：湿度过低开加湿+净化
-  description: 湿度低于50%持续1分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整
+  description: 湿度低于45%持续1分钟，开机并设为加湿+净化模式，档位按PM2.5动态调整
   triggers:
   - entity_id: sensor.treeow_581914_humidity
-    below: 50
+    below: 45
     for:
       minutes: 1
     trigger: numeric_state
@@ -645,10 +645,10 @@
   mode: single
 - id: '1792800000002'
   alias: 客厅加湿器：湿度达标切换仅净化
-  description: 湿度升到60%持续1分钟后切换为仅净化模式，档位按PM2.5动态调整
+  description: 湿度升到55%持续1分钟后切换为仅净化模式，档位按PM2.5动态调整
   triggers:
   - entity_id: sensor.treeow_581914_humidity
-    above: 60
+    above: 55
     for:
       minutes: 1
     trigger: numeric_state
@@ -700,7 +700,7 @@
         conditions:
         - condition: numeric_state
           entity_id: sensor.treeow_581914_humidity
-          below: 50
+          below: 45
         - condition: and
           conditions:
           - condition: state
@@ -732,7 +732,7 @@
   mode: single
 - id: '1792800000004'
   alias: 客厅加湿器：空气达标切换低档
-  description: PM2.5回落到10以下持续1分钟且湿度不低于50%时，切换为仅净化一档
+  description: PM2.5回落到10以下持续1分钟且湿度不低于45%时，切换为仅净化一档
   triggers:
   - entity_id: sensor.treeow_581914_pm25
     below: 10
@@ -742,7 +742,7 @@
   conditions:
   - condition: numeric_state
     entity_id: sensor.treeow_581914_humidity
-    above: 50
+    above: 45
   actions:
   - action: switch.turn_on
     target:
@@ -826,7 +826,7 @@
   mode: single
 - id: '1792800000008'
   alias: 客厅加湿器：早晨9点唤醒并检查
-  description: 每天早晨9点自动开机，5分钟后按正常逻辑决策：湿度<50加湿，PM2.5>20净化，PM2.5<10低档，10~20保持当前状态
+  description: 每天早晨9点自动开机，5分钟后按正常逻辑决策：湿度<45加湿，PM2.5>20净化，PM2.5<10低档，10~20保持当前状态
   triggers:
   - at: '09:00:00'
     trigger: time
@@ -845,7 +845,7 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_581914_humidity
-        below: 50
+        below: 45
       sequence:
       - action: select.select_option
         target:
