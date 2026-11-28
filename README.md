@@ -36,8 +36,8 @@ Home Assistant（HAOS）在 192.168.5.249 上 `/config` 的 YAML 层版本库。
 ## 自动化分组（17 条）
 
 次卧 G2 Pro（7 条）
-- 湿度 <50 持续 1 分钟：开加湿+净化，切 humidify，10 秒后按时间段 manual/sleep，1 档
-- 湿度 >60：切 purify（PM2.5 ≥20 走净化 1 档，否则 sleep）
+- 湿度 <45 持续 1 分钟：开加湿+净化，切 humidify，10 秒后按时间段 manual/sleep，1 档
+- 湿度 >50：切 purify（PM2.5 ≥20 走净化 1 档，否则 sleep）
 - PM2.5 >20：开净化，保持当前 humidify/purify
 - PM2.5 <10：切 sleep
 - 20:00：切 sleep（顺带开童锁、关智能模式）

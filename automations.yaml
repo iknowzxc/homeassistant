@@ -1,9 +1,9 @@
 - id: '1792741959341'
   alias: 次卧加湿器：湿度过低开加湿+净化
-  description: 湿度低于50%持续1分钟，开机并设为加湿+净化模式、一档
+  description: 湿度低于45%持续1分钟，开机并设为加湿+净化模式、一档
   triggers:
   - entity_id: sensor.treeow_311806_humidity
-    below: 50
+    below: 45
     for:
       minutes: 1
     trigger: numeric_state
@@ -48,10 +48,10 @@
   mode: single
 - id: '1792741974275'
   alias: 次卧加湿器：湿度达标切换净化或睡眠
-  description: 湿度升到60%后：PM2.5高于20继续净化，否则进入睡眠模式
+  description: 湿度升到50%后：PM2.5高于20继续净化，否则进入睡眠模式
   triggers:
   - entity_id: sensor.treeow_311806_humidity
-    above: 60
+    above: 50
     for:
       minutes: 1
     trigger: numeric_state
@@ -146,7 +146,7 @@
         conditions:
         - condition: numeric_state
           entity_id: sensor.treeow_311806_humidity
-          below: 50
+          below: 45
         - condition: and
           conditions:
           - condition: state
@@ -194,7 +194,7 @@
   mode: single
 - id: '1792742003391'
   alias: 次卧加湿器：空气达标切换睡眠
-  description: PM2.5回落到10以下持续1分钟且湿度不低于50%时进入睡眠模式
+  description: PM2.5回落到10以下持续1分钟且湿度不低于45%时进入睡眠模式
   triggers:
   - entity_id: sensor.treeow_311806_pm25
     below: 10
@@ -204,7 +204,7 @@
   conditions:
   - condition: numeric_state
     entity_id: sensor.treeow_311806_humidity
-    above: 50
+    above: 45
   actions:
   - action: switch.turn_on
     target:
@@ -413,7 +413,7 @@
   mode: single
 - id: '1792749300000'
   alias: 次卧加湿器：早晨9点唤醒并检查
-  description: 每天早晨9点自动开机，5分钟后按正常逻辑决策：湿度<50加湿，PM2.5>20净化，PM2.5<10睡眠，10~20保持当前状态
+  description: 每天早晨9点自动开机，5分钟后按正常逻辑决策：湿度<45加湿，PM2.5>20净化，PM2.5<10睡眠，10~20保持当前状态
   triggers:
   - at: '09:00:00'
     trigger: time
@@ -432,7 +432,7 @@
     - conditions:
       - condition: numeric_state
         entity_id: sensor.treeow_311806_humidity
-        below: 50
+        below: 45
       sequence:
       - action: select.select_option
         target:
